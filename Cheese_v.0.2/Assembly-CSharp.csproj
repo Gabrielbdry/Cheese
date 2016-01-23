@@ -49,13 +49,16 @@
      <Compile Include="Assets\MobController.cs" />
      <Compile Include="Assets\MobSpawner.cs" />
      <Compile Include="Assets\Node.cs" />
+     <Compile Include="Assets\Scripts\BoxController.cs" />
      <Compile Include="Assets\Scripts\BoxInteraction.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Collector.cs" />
      <Compile Include="Assets\Scripts\ConveyorBelt.cs" />
      <Compile Include="Assets\Scripts\Creator.cs" />
+     <Compile Include="Assets\Scripts\GrabAndDrop.cs" />
      <Compile Include="Assets\Scripts\LeverInteraction.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\RayCast.cs" />
      <Compile Include="Assets\Scripts\RayCasting.cs" />
      <Compile Include="Assets\Scripts\Trap.cs" />
      <Compile Include="Assets\Scripts\UI.cs" />

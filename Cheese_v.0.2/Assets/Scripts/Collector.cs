@@ -22,15 +22,15 @@ public class Collector : MonoBehaviour {
 
 	public static void Break(){
 		if (!broken) {
-			Creator.Halt ();
-			ConveyorBelt.Halt ();
+			Creator.Break ();
+			ConveyorBelt.Break ();
 		}
 	}
 
 	public static void Repair(){
 		if (broken) {
-			ConveyorBelt.Continue ();
-			Creator.Continue ();
+			ConveyorBelt.Repair ();
+			Creator.Repair ();
 		}
 	}
 }
