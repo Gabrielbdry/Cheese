@@ -29,7 +29,7 @@ public class MobController : MonoBehaviour {
 	}
 
 	void OnCollisionStay(Collision collision){
-		if(collision.gameObject.tag == this.tag)
+		if(collision.gameObject.tag == this.tag || collision.gameObject.tag == "Player")
 			Physics.IgnoreCollision (collision.collider, this.GetComponent<Collider>());
 	}
 
