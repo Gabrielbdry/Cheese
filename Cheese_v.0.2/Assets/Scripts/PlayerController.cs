@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour {
         if (is_Jumping)
         {
             GravityPull = Vector3.zero;
-            GravityPull.y = 5;
+			GravityPull.y = jumpSpeed;
             is_OnGround = false;
         }
         
@@ -182,8 +182,10 @@ public class PlayerController : MonoBehaviour {
         // it is also good to note that the transform position in the sample assets is at the base of the character
         if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, m_GroundCheckDistance))
         {
-            m_GroundNormal = hitInfo.normal;
-            is_OnGround = true;
+			if (hitInfo.collider.gameObject.CompareTag("Ground")) {
+				m_GroundNormal = hitInfo.normal;
+				is_OnGround = true;
+			}
         }
         else
         {

@@ -10,7 +10,6 @@ public class CameraController : MonoBehaviour {
     public float boxCheckDistance = 6.0f;
 
     private Vector3 offset;
-    private GameObject[] boxes;
 
     // Use this for initialization
     void Start () {
