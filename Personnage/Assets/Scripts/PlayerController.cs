@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour {
     public float gravity = 9.8f;
 
     private Rigidbody rb;
-    private CharacterController controller;
     private Vector3 moveFoward;
     private Vector3 currentMovement;
     private Vector3 GravityPull;
@@ -37,7 +36,6 @@ public class PlayerController : MonoBehaviour {
         is_Holding = false;
         is_Jumping = false;
         is_Reloading = false;
-        controller = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         currentMovement = Vector3.zero;

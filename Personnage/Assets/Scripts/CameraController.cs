@@ -7,8 +7,10 @@ public class CameraController : MonoBehaviour {
     public float crouchingHeight = 0.75f;
     public float distance = 10.0f;
     public float sensitivity = 3.0f;
+    public float boxCheckDistance = 6.0f;
 
     private Vector3 offset;
+    private GameObject[] boxes;
 
     // Use this for initialization
     void Start () {
