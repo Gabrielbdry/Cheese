@@ -8,10 +8,12 @@ public class PlayerController : MonoBehaviour {
     public float gravity = 9.8f;
 
     private Rigidbody rb;
-    private CharacterController controller;
     private Vector3 moveFoward;
     private Vector3 currentMovement;
-    private float slopeAngle;
+    private Vector3 GravityPull;
+    private float m_GroundCheckDistance = 1.0f;
+    private float slope;
+    private Vector3 m_GroundNormal;
 
     // States...
     bool is_OnGround;
@@ -26,7 +28,6 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        slopeAngle = 0;
         is_OnGround = false;
         is_Crouching = false;
         is_Standing = true;
@@ -35,10 +36,10 @@ public class PlayerController : MonoBehaviour {
         is_Holding = false;
         is_Jumping = false;
         is_Reloading = false;
-        controller = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         currentMovement = Vector3.zero;
+        GravityPull = Vector3.zero;
 	}
 	
     public void UpdateDirection(Vector3 Foward)
@@ -54,6 +55,8 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        CheckGroundStatus();
+
         bool moveFront = Input.GetKey(KeyCode.W);
         bool moveLeft = Input.GetKey(KeyCode.A);
         bool moveRight = Input.GetKey(KeyCode.D);
@@ -67,52 +70,88 @@ public class PlayerController : MonoBehaviour {
         is_Standing = (!is_Crouching && !is_Walking && !is_Running && !is_Jumping) ? true : false;
 
         currentMovement.x = 0;
+        currentMovement.y = 0;
         currentMovement.z = 0;
 
-        if (slopeAngle < 45 && is_OnGround)
+        float slopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
+
+        if (slopeAngle < 45)
         {
-            if (moveFront)
+            if (moveFront && !moveBack)
             {
-                currentMovement += Vector3.ProjectOnPlane(moveFoward, Vector3.up).normalized * speed * ((is_Running) ? 2 : 1);
+                if (!moveLeft && !moveRight)
+                {
+                    currentMovement += Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                }
+                else if (moveLeft && !moveRight)
+                {
+                    Vector3 left = Vector3.Cross(m_GroundNormal, moveFoward);
+                    Vector3 front = Vector3.Cross(left, m_GroundNormal);
+                    currentMovement += (front - left).normalized * speed * ((is_Running) ? 2 : 1);
+                }
+                else if (moveRight && !moveLeft)
+                {
+                    Vector3 right = Vector3.Cross(moveFoward, m_GroundNormal);
+                    Vector3 front = Vector3.Cross(m_GroundNormal, right);
+                    currentMovement += (front - right).normalized * speed * ((is_Running) ? 2 : 1);
+                }
             }
-            if (moveBack)
+            else if (moveBack && !moveFront)
             {
-                currentMovement -= Vector3.ProjectOnPlane(moveFoward, Vector3.up).normalized * speed * ((is_Running) ? 2 : 1);
+                if (!moveLeft && !moveRight)
+                {
+                    currentMovement -= Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                }
+                else if (moveLeft && !moveRight)
+                {
+                    Vector3 left = Vector3.Cross(m_GroundNormal, moveFoward);
+                    Vector3 back = -Vector3.Cross(left, m_GroundNormal);
+                    currentMovement += (-left + back).normalized * speed * ((is_Running) ? 2 : 1);
+                }
+                else if (moveRight && !moveLeft)
+                {
+                    Vector3 right = Vector3.Cross(moveFoward, m_GroundNormal);
+                    Vector3 back = -Vector3.Cross(m_GroundNormal, right);
+                    currentMovement += (-right + back).normalized * speed * ((is_Running) ? 2 : 1);
+                }
             }
-            if (moveLeft)
+            else if (moveLeft && !moveRight)
             {
-                currentMovement += Vector3.Cross(moveFoward, Vector3.up).normalized * speed * ((is_Running) ? 2 : 1);
+                currentMovement += Vector3.Cross(moveFoward, m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
             }
-            if (moveRight)
+            else if (moveRight && !moveLeft)
             {
-                currentMovement -= Vector3.Cross(moveFoward, Vector3.up).normalized * speed * ((is_Running) ? 2 : 1);
+                currentMovement += Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? 2 : 1);
             }
-        }
-        
-        
-        if (is_Jumping)
-        {
-            currentMovement.y = jumpSpeed;
-            is_OnGround = false;
         }
 
+        if (is_Jumping)
+        {
+            GravityPull = Vector3.zero;
+            GravityPull.y = 5;
+            is_OnGround = false;
+        }
         
         if (!is_OnGround)
         {
-            currentMovement.y -= gravity * Time.deltaTime;
+            if (GravityPull.y > 0)
+                GravityPull.y -= gravity * Time.deltaTime * 0.8f;
+            else
+                GravityPull.y -= gravity * Time.deltaTime;
         }
         
 
-        rb.velocity = currentMovement;
+        rb.velocity = currentMovement + GravityPull;
     }
 
+    
     void OnCollisionEnter(Collision other)
     {
         if (other.collider.gameObject.CompareTag("Ground"))
         {
             is_Jumping = false;
             is_OnGround = true;
-            currentMovement.y = 0;
+            GravityPull.y = 0;
         }
     }
 
@@ -122,9 +161,7 @@ public class PlayerController : MonoBehaviour {
         {
             is_Jumping = false;
             is_OnGround = true;
-            currentMovement.y = 0;
-            slopeAngle = Vector3.Angle(other.contacts[0].normal, Vector3.up);
-            transform.Rotate(Vector3.right, slopeAngle);
+            GravityPull.y = 0;
         }
     }
 
@@ -133,6 +170,25 @@ public class PlayerController : MonoBehaviour {
         if (other.collider.gameObject.CompareTag("Ground"))
         {
             is_OnGround = false;
+        }
+    }
+    
+
+    void CheckGroundStatus()
+    {
+        RaycastHit hitInfo;
+
+        // 0.1f is a small offset to start the ray from inside the character
+        // it is also good to note that the transform position in the sample assets is at the base of the character
+        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, m_GroundCheckDistance))
+        {
+            m_GroundNormal = hitInfo.normal;
+            is_OnGround = true;
+        }
+        else
+        {
+            is_OnGround = false;
+            m_GroundNormal = Vector3.up;
         }
     }
 }

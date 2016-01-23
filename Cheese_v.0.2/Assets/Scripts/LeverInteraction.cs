@@ -10,9 +10,9 @@ public class LeverInteraction : MonoBehaviour {
 	private float lastTime;
 
 	void Start () {
-		pattern = new bool[6];
-		state = new bool[6];
-		for (int i = 0; i < 6; i++) {
+		pattern = new bool[3];
+		state = new bool[3];
+		for (int i = 0; i < 3; i++) {
 			pattern [i] = (Random.Range(0,1) == 1);
 			state [i] = pattern [i]; 
 		}
@@ -20,62 +20,39 @@ public class LeverInteraction : MonoBehaviour {
 	}
 
 	void Update () {
+		if (lastTime == -1 && !Collector.broken && !Creator.broken)
+			lastTime = Time.time;
 		if(Time.time - lastTime >= minRunTime){
 			if (Random.value < breakingRatio) {
-				uint untouched = (uint)Random.Range (0,2);
-				if (Random.value >= 0.5f && !Creator.broken) {
+				if (!Collector.broken) {
+					uint untouched = (uint)Random.Range (0,2);
 					lastTime = -1;
 					for (int i = 0; i < 3; i++) {
 						if (i != untouched)
 							pattern [i] = !pattern [i];
 					}
-				} 
-				else if (!Collector.broken) {
-					lastTime = -1;
-					untouched += 3;
-					for (int i = 3; i < 6; i++) {
-						if (i != untouched)
-							pattern [i] = !pattern [i];
-					}
 				}
 
 			}
 		}
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 3; i++) {
 			if (pattern [i] != state [i]) {
-				if (i < 3) {
-					Creator.Break ();
-					lastTime = -1;
-				} 
-				else {
-					Collector.Break ();
-					lastTime = -1;
-				}
+				Collector.Break ();
+				lastTime = -1;
 			}
 		}
-		if (lastTime == -1 && !Collector.broken && !Creator.broken)
-			lastTime = Time.time;
 	}
 
 	static public void Use(GameObject lever){
-		switch (lever.tag) {
-		case("L1"):
+		switch (lever.name) {
+		case("Lever1"):
 			state [0] = !state [0];
 			break;
-		case("L2"):
+		case("Lever2"):
 			state [1] = !state [1];
 			break;
-		case("L3"):
+		case("Lever3"):
 			state [2] = !state [2];
-			break;
-		case("L4"):
-			state [3] = !state [3];
-			break;
-		case("L5"):
-			state [4] = !state [4];
-			break;
-		case("L6"):
-			state [5] = !state [5];
 			break;
 		}
 	}

@@ -4,7 +4,6 @@ using System.Collections;
 public class Creator : MonoBehaviour {
 
 	private static float lastTime;
-	private static bool status = true;
 	public static bool broken = false;
 	public float frequency;
 	public GameObject cheese;
@@ -14,7 +13,7 @@ public class Creator : MonoBehaviour {
 	}
 
 	void Update () {
-		if (status && !broken && Time.time - lastTime >= frequency) {
+		if (!broken && Time.time - lastTime >= frequency) {
 			Instantiate (cheese);
 			lastTime = Time.time;
 		}
@@ -28,21 +27,7 @@ public class Creator : MonoBehaviour {
 	public static void Repair(){
 		if (broken) {
 			broken = false;
-			if(status)
-				lastTime = Time.time;
-		}
-	}
-
-	public static void Halt(){
-		if(status)
-			status = false;
-	}
-
-	public static void Continue(){
-		if (!status) {
-			status = true;
-			if(!broken)
-				lastTime = Time.time;
+			lastTime = Time.time;
 		}
 	}
 }

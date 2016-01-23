@@ -9,12 +9,12 @@ public class ConveyorBelt : MonoBehaviour {
 		other.rigidbody.velocity = speed;
 	}
 
-	public static void Halt(){
+	public static void Break(){
 		if(speed == new Vector3(0,0,-2))
 			speed = Vector3.zero;
 	}
 
-	public static void Continue(){
+	public static void Repair(){
 		if(speed == Vector3.zero)
 			speed = new Vector3(0,0,-2);
 	}
