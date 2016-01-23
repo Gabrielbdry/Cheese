@@ -5,7 +5,7 @@ public class Creator : MonoBehaviour {
 
 	private static float lastTime;
 	private static bool status = true;
-	private static bool broken = false;
+	public static bool broken = false;
 	public float frequency;
 	public GameObject cheese;
 
