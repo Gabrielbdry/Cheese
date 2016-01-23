@@ -21,16 +21,17 @@ public class LeverInteraction : MonoBehaviour {
 
 	void Update () {
 		if(Time.time - lastTime >= minRunTime){
-			lastTime = -1;
 			if (Random.value < breakingRatio) {
 				uint untouched = (uint)Random.Range (0,2);
 				if (Random.value >= 0.5f && !Creator.broken) {
+					lastTime = -1;
 					for (int i = 0; i < 3; i++) {
 						if (i != untouched)
 							pattern [i] = !pattern [i];
 					}
 				} 
 				else if (!Collector.broken) {
+					lastTime = -1;
 					untouched += 3;
 					for (int i = 3; i < 6; i++) {
 						if (i != untouched)
@@ -42,10 +43,14 @@ public class LeverInteraction : MonoBehaviour {
 		}
 		for (int i = 0; i < 6; i++) {
 			if (pattern [i] != state [i]) {
-				if (i < 3)
+				if (i < 3) {
 					Creator.Break ();
-				else
+					lastTime = -1;
+				} 
+				else {
 					Collector.Break ();
+					lastTime = -1;
+				}
 			}
 		}
 		if (lastTime == -1 && !Collector.broken && !Creator.broken)

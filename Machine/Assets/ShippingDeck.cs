@@ -8,6 +8,7 @@ public class ShippingDeck : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		if (other.tag == "Box") {
 			//setScore
+			Destroy(other);
 		}
 	}
 
