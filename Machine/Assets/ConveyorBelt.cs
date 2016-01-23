@@ -10,10 +10,12 @@ public class ConveyorBelt : MonoBehaviour {
 	}
 
 	public static void Halt(){
-		speed = Vector3.zero;
+		if(speed == new Vector3(0,0,5))
+			speed = Vector3.zero;
 	}
 
 	public static void Continue(){
-		speed = new Vector3(0,0,5);
+		if(speed == Vector3.zero)
+			speed = new Vector3(0,0,5);
 	}
 }

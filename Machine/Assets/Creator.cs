@@ -5,6 +5,7 @@ public class Creator : MonoBehaviour {
 
 	private static float lastTime;
 	private static bool status = true;
+	public static bool broken = false;
 	public float frequency;
 	public GameObject cheese;
 
@@ -13,27 +14,35 @@ public class Creator : MonoBehaviour {
 	}
 
 	void Update () {
-		if (status && Time.time - lastTime >= frequency) {
+		if (status && !broken && Time.time - lastTime >= frequency) {
 			Instantiate (cheese);
 			lastTime = Time.time;
 		}
 	}
 
 	public static void Break(){
-		status = false;
+		if(!broken)
+			broken = true;
 	}
 
 	public static void Repair(){
-		status = true;
-		lastTime = Time.time;
+		if (broken) {
+			broken = false;
+			if(status)
+				lastTime = Time.time;
+		}
 	}
 
 	public static void Halt(){
-		status = false;
+		if(status)
+			status = false;
 	}
 
 	public static void Continue(){
-		status = true;
-		lastTime = Time.time;
+		if (!status) {
+			status = true;
+			if(!broken)
+				lastTime = Time.time;
+		}
 	}
 }

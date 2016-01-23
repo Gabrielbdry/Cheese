@@ -6,6 +6,7 @@ public class Collector : MonoBehaviour {
 	public GameObject box;
 	public Vector3 spawnZone;
 	public uint cheeseBox = 10;
+	public static bool broken = false;
 	private uint cheeseCount;
 
 	void OnTriggerEnter(Collider other) {
@@ -20,12 +21,16 @@ public class Collector : MonoBehaviour {
 	}
 
 	public static void Break(){
-		Creator.Halt ();
-		ConveyorBelt.Halt ();
+		if (!broken) {
+			Creator.Halt ();
+			ConveyorBelt.Halt ();
+		}
 	}
 
 	public static void Repair(){
-		ConveyorBelt.Continue ();
-		Creator.Continue ();
+		if (broken) {
+			ConveyorBelt.Continue ();
+			Creator.Continue ();
+		}
 	}
 }
