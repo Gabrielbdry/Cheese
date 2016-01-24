@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour {
     private Vector3 moveFoward;
     private Vector3 currentMovement;
     private Vector3 GravityPull;
-    private float m_GroundCheckDistance = 0.5f;
-    private float slope;
+    private float slopeAngle = 0;
+    private float m_GroundCheckDistance = 1.0f;
     private Vector3 m_GroundNormal;
 
     // States...
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        CheckGroundStatus();
+        CheckGroundStatus(slopeAngle);
 
         bool moveFront = Input.GetKey(KeyCode.W);
         bool moveLeft = Input.GetKey(KeyCode.A);
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour {
         is_Reloading = (!is_Holding) ? Input.GetKey(KeyCode.R) : false;
         is_Standing = (!is_Walking && !is_Running && !is_Jumping) ? true : false;
 
-        float slopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
+        slopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
         if (!moveBack && !moveFront && !moveLeft && !moveRight)
             currentMovement = Vector3.zero;
         else if (slopeAngle < 45)
@@ -115,8 +115,7 @@ public class PlayerController : MonoBehaviour {
                 currentMovement = Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? runFactor : 1);
             }
         }
-
-        Debug.Log(is_OnGround.ToString());
+        
         Vector3 newForward = new Vector3(currentMovement.x, 0, currentMovement.z);
         this.transform.forward = Vector3.Slerp(this.transform.forward, newForward, Time.deltaTime * 20);
 
@@ -174,48 +173,35 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    
-    /*void OnCollisionEnter(Collision other)
-    {
-        if (other.collider.gameObject.CompareTag("Ground"))
-        {
-            is_Jumping = false;
-            is_OnGround = true;
-            GravityPull.y = 0;
-        }
-    }
-
-    void OnCollisionStay(Collision other)
-    {
-        if (other.collider.gameObject.CompareTag("Ground"))
-        {
-            is_Jumping = false;
-            is_OnGround = true;
-            GravityPull.y = 0;
-        }
-    }
-
-    void OnCollisionExit(Collision other)
-    {
-        if (other.collider.gameObject.CompareTag("Ground"))
-        {
-            is_OnGround = false;
-        }
-    }
-    */
-
-    void CheckGroundStatus()
+    void CheckGroundStatus(float slopeAngle)
     {
         RaycastHit hitInfo;
         
         if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), Vector3.down, out hitInfo, m_GroundCheckDistance))
         {
-			if (hitInfo.collider.gameObject.CompareTag("Ground")) {
-				m_GroundNormal = hitInfo.normal;
-                is_Jumping = false;
-				is_OnGround = true;
-                GravityPull.y = 0;
-			}
+            if (hitInfo.distance <= 0.5)
+            {
+                if (hitInfo.collider.gameObject.CompareTag("Ground"))
+                {
+                    m_GroundNormal = hitInfo.normal;
+                    is_Jumping = false;
+                    is_OnGround = true;
+                    GravityPull.y = 0;
+                }
+            }
+            else {
+                slopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
+                if (slopeAngle > 0)
+                {
+                    if (hitInfo.collider.gameObject.CompareTag("Ground"))
+                    {
+                        m_GroundNormal = hitInfo.normal;
+                        is_Jumping = false;
+                        is_OnGround = true;
+                        GravityPull.y = 0;
+                    }
+                }
+            }
         }
         else
         {
