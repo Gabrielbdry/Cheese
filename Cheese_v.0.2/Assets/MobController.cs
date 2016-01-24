@@ -6,6 +6,7 @@ using System.Diagnostics;
 public abstract class MobState{
     public abstract void Update();
     public abstract void OnTriggerEnter(Collider collision);
+    public abstract void OnCollisionEnter(Collision collision);
 }
 
 
@@ -13,6 +14,8 @@ public class MobController : MonoBehaviour {
     public float speed;
     public Node startingNode;
     public Node endNode;
+
+    public Transform explosion;
 
     private MobState actualState = null;
 	private MobState changedState = null;
@@ -23,9 +26,19 @@ public class MobController : MonoBehaviour {
         UnityEngine.Debug.Log("Start");
     }
 
+    public void Destroy() {
+        Destroy(this.gameObject);
+    }
+
+    public void Instantiate(UnityEngine.Object obj, Vector3 position) {
+        Instantiate(obj, position, Quaternion.identity);
+    }
+
+
 	void OnCollisionEnter(Collision collision){
 		if(collision.gameObject.tag == this.tag || collision.gameObject.tag == "Player")
 			Physics.IgnoreCollision (collision.collider, this.GetComponent<Collider>());
+        this.actualState.OnCollisionEnter(collision);
 	}
 
 	void OnCollisionStay(Collision collision){
@@ -65,19 +78,47 @@ public class FollowingPathState : MobState
 	bool foundLastNode = false;
 	bool died = false;
 
+    bool disturbedDirection = false;
+
     public FollowingPathState(MobController mob){
         this.mob = mob;
         movementClock.Start();
         nextNode = mob.startingNode;
+        GetRightDirection();
     }
 
 	public override void Update(){
+        //if (movementClock.Elapsed.Seconds >= 1.0f) {
+        //    disturbedDirection = !disturbedDirection;
+        //    movementClock.Reset();
+        //    movementClock.Start();
+        //    if (disturbedDirection)
+        //        DisturbDirection();
+        //    else
+        //        GetRightDirection();
+        //}
+       
+       
+        this.mob.GetComponent<Rigidbody>().velocity = movement * mob.speed;
+
+        this.mob.transform.up = this.mob.GetComponent<Rigidbody>().velocity;
+
+        if (foundLastNode)
+			this.mob.setState (new DeadState (this.mob));
+    }
+
+    public void DisturbDirection() {
+        float angle = (Mathf.Atan(movement.x / movement.z) / Mathf.PI) * 180;
+        angle += rand.Next(-2, 2);
+        movement.x = Mathf.Sin((angle * Mathf.PI) / 180f);
+        movement.z = Mathf.Cos((angle * Mathf.PI) / 180f);
+
+        movement.Normalize();
+    }
+
+    public void GetRightDirection() {
         movement = nextNode.transform.position - mob.transform.position;
         movement.Normalize();
-        movement *= mob.speed;
-        this.mob.transform.Translate(movement * Time.deltaTime);
-		if (foundLastNode)
-			this.mob.setState (new DeadState ());
     }
 
     public override void OnTriggerEnter(Collider collision) {
@@ -96,6 +137,7 @@ public class FollowingPathState : MobState
 						nextNode = tmp;
 						found = true;
 						UnityEngine.Debug.Log("Next Node: " + nextNode.name);
+                        GetRightDirection();
 					}
 
                 }
@@ -104,10 +146,22 @@ public class FollowingPathState : MobState
          
         }
     }
+
+    public override void OnCollisionEnter(Collision collision) {
+        throw new NotImplementedException();
+    }
 }
 
 public class DeadState : MobState
 {
+    public DeadState(MobController mob) {
+        mob.Instantiate(mob.explosion.gameObject, mob.transform.position);
+        mob.Destroy();
+    }
+
+    public override void OnCollisionEnter(Collision collision) {
+    }
+
     public override void OnTriggerEnter(Collider collision) {
     }
 
