@@ -120,11 +120,10 @@ public class PlayerController : MonoBehaviour {
         Debug.Log(is_OnGround.ToString());
         if (is_Jumping)
         {
-            Debug.Log("Jump");
             GravityPull = Vector3.zero;
 			GravityPull.y = jumpSpeed;
             is_OnGround = false;
-			//GetComponent<Animator> ().SetBool ("Jump", true);
+			GetComponent<Animator> ().SetBool ("Jump", true);
         }
         
 		if (!is_OnGround) {
@@ -132,7 +131,7 @@ public class PlayerController : MonoBehaviour {
 				GravityPull.y -= gravity * Time.deltaTime * 0.8f;
 			else
 				GravityPull.y -= gravity * Time.deltaTime;
-		} /*else {
+		} else {
 			GetComponent<Animator> ().SetBool ("Jump", false);
 		}
         
@@ -148,7 +147,7 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<Animator> ().SetBool ("Run", true);
 		} else {
 			GetComponent<Animator> ().SetBool ("Run", false);
-		}*/
+		}
 
         rb.velocity = currentMovement + GravityPull;
     }
@@ -191,7 +190,6 @@ public class PlayerController : MonoBehaviour {
         // it is also good to note that the transform position in the sample assets is at the base of the character
         if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), Vector3.down, out hitInfo, m_GroundCheckDistance))
         {
-            Debug.Log("Detects object");
 			if (hitInfo.collider.gameObject.CompareTag("Ground")) {
 				m_GroundNormal = hitInfo.normal;
 				is_OnGround = true;
