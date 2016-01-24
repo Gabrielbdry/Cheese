@@ -98,15 +98,6 @@
  <Reference Include="UnityEngine.Networking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
-<<<<<<< HEAD
- <Reference Include="Mono.Cecil">
- <HintPath>C:/Program Files/Unity/Editor/Data/Managed/Mono.Cecil.dll</HintPath>
- </Reference>
- <Reference Include="UnityEditor.iOS.Extensions.Xcode">
- <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
- </Reference>
-=======
->>>>>>> 554f1aea74b7045b0644e5835f35335d9b3258ea
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

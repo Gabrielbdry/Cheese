@@ -10,4 +10,5 @@ public class BoxInteraction : MonoBehaviour {
 			//Score--?
 			Destroy(gameObject);
 	}
+    
 }

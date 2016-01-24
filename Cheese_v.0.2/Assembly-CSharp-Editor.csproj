@@ -71,12 +71,9 @@
  <Reference Include="UnityEditor.Networking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/Editor/UnityEditor.Networking.dll</HintPath>
  </Reference>
-<<<<<<< HEAD
-=======
  <Reference Include="UnityEditor.TreeEditor">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TreeEditor/Editor/UnityEditor.TreeEditor.dll</HintPath>
  </Reference>
->>>>>>> 554f1aea74b7045b0644e5835f35335d9b3258ea
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
  </Reference>
