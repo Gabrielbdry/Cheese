@@ -17,7 +17,7 @@ public class RayCasting : MonoBehaviour
 
     void Update()
     {
-		if (Input.GetMouseButtonDown (0) && PlayerController.currWeapon == 0);
+		if (Input.GetMouseButtonDown (0) && PlayerController.weaponEquiped);
         {
             if (watch.Elapsed.Seconds >= 1 / fireRate)
             {

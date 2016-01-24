@@ -6,8 +6,8 @@ public class PlayerController : MonoBehaviour {
     public float speed;
     public float jumpSpeed = 20;
     public float gravity = 9.8f;
-	public Mesh[] weapons;
-	public static uint currWeapon = 0;
+	public Mesh weapon;
+	public static bool weaponEquiped = false;
 
     private Rigidbody rb;
     private Vector3 moveFoward;
@@ -128,7 +128,16 @@ public class PlayerController : MonoBehaviour {
         }
         
 		if (Input.GetKeyDown (KeyCode.Tab)) {
-			this.GetComponentsInChildren<MeshFilter>()[2].mesh = weapons[++currWeapon % weapons.Length];
+			if (weaponEquiped) {
+				GameObject.Find ("weapon").GetComponent<MeshRenderer> ().enabled = false;
+				GameObject.Find ("holster").GetComponent<MeshRenderer> ().enabled = true;;
+				weaponEquiped = false;
+			} else {
+
+				GameObject.Find ("weapon").GetComponent<MeshRenderer> ().enabled = true;
+				GameObject.Find ("holster").GetComponent<MeshRenderer> ().enabled = false;
+				weaponEquiped = true;
+			}
 		}
 
 		if (!is_OnGround) {
