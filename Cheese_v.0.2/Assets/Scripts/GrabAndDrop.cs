@@ -17,9 +17,11 @@ public class GrabAndDrop : MonoBehaviour {
     {
         Vector3 position = transform.position;
         RaycastHit hit;
-        Vector3 target = position + transform.forward * range;
+		Vector3 target = transform.forward * range;
+		target.y += 1;
 
-		Debug.DrawRay (position, target);
+		Debug.DrawRay (position, target, Color.green, 5);
+
 		if (Physics.Raycast(position, target, out hit))
         {
             return hit.collider.gameObject;
@@ -55,8 +57,9 @@ public class GrabAndDrop : MonoBehaviour {
 		if (grabbedObject.GetComponent<Rigidbody> () != null) {
 			grabbedObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
 			GetComponent<Animator> ().SetBool ("Carry", false);
+			Physics.IgnoreCollision (grabbedObject.GetComponent<Collider>(), this.GetComponent<Collider>(), false);
 		}
-
+		Destroy (grabbedObject);
         grabbedObject = null;
     }
 

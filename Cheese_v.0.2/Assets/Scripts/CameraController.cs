@@ -12,19 +12,22 @@ public class CameraController : MonoBehaviour {
 	public float boxCheckDistance = 6.0f;
 
 	private Vector3 offset;
+	private Vector3 rangeOffset;
+	private Vector3 scopeOffset;
 	private Vector3 rotTangent;
 	private bool collided = false;
 
 	// Use this for initialization
 	void Start() {
-		offset = (transform.position - player.transform.position).normalized;
-		offset.y = 
-		transform.position = player.transform.position + offset * distance;
+		rangeOffset = (transform.position - (transform.forward * 2)).normalized;
+		offset = rangeOffset;
+		transform.position = player.transform.position + rangeOffset * distance;
 	}
 
 	// Update is called once per frame
 	void Update() {
-
+		if (Input.GetMouseButtonDown (0))
+			Debug.DrawRay (this.transform.position, this.transform.forward * 20, Color.blue, 5);
 		player.UpdateDirection(transform.forward);
 		Quaternion qX = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * sensitivity, new Vector3(0, 0.9f, 0));
 		Quaternion qY = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * sensitivity, Vector3.Cross(new Vector3(transform.forward.x, 0.0f, transform.forward.z), Vector3.up));

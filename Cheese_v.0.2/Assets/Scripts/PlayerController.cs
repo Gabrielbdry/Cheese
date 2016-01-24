@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour {
         
 		if (moveLeft || moveRight || moveFront || moveBack) {
 			Vector3 newForward = new Vector3 (currentMovement.x, 0, currentMovement.z);
-			this.transform.forward = Vector3.Slerp (this.transform.forward, newForward, Time.deltaTime * 10);
+			this.transform.forward = Vector3.Slerp (this.transform.forward, newForward, Time.deltaTime * 20);
 			GetComponent<Animator> ().SetBool ("Walk", true);
 		} else {
 			GetComponent<Animator> ().SetBool ("Walk", false);
