@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour {
 
     // States...
     bool is_OnGround;
-    bool is_Crouching;
     bool is_Standing;
     bool is_Walking;
     bool is_Running;
@@ -29,7 +28,6 @@ public class PlayerController : MonoBehaviour {
     void Start ()
     {
         is_OnGround = false;
-        is_Crouching = false;
         is_Standing = true;
         is_Walking = false;
         is_Running = false;
@@ -46,11 +44,6 @@ public class PlayerController : MonoBehaviour {
     {
         moveFoward = Foward;
     }
-    
-    public bool isCrouching()
-    {
-        return is_Crouching;
-    }
 
 	// Update is called once per frame
 	void Update ()
@@ -62,12 +55,11 @@ public class PlayerController : MonoBehaviour {
         bool moveRight = Input.GetKey(KeyCode.D);
         bool moveBack = Input.GetKey(KeyCode.S);
         
-        is_Crouching = (!is_Running && !is_Jumping) ? Input.GetKey(KeyCode.LeftControl) : false;
         is_Walking = !Input.GetKey(KeyCode.LeftShift);
-        is_Running = (!is_Jumping && !is_Holding && !is_Crouching) ? Input.GetKey(KeyCode.LeftShift) : false;
-        is_Jumping = (!is_Crouching && is_OnGround) ? Input.GetKey(KeyCode.Space) : false;
+        is_Running = (!is_Jumping && !is_Holding) ? Input.GetKey(KeyCode.LeftShift) : false;
+        is_Jumping = (is_OnGround) ? Input.GetKey(KeyCode.Space) : false;
         is_Reloading = (!is_Holding) ? Input.GetKey(KeyCode.R) : false;
-        is_Standing = (!is_Crouching && !is_Walking && !is_Running && !is_Jumping) ? true : false;
+        is_Standing = (!is_Walking && !is_Running && !is_Jumping) ? true : false;
 
         currentMovement.x = 0;
         currentMovement.y = 0;
@@ -125,12 +117,14 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
+        Debug.Log(is_OnGround.ToString());
         if (is_Jumping)
         {
+            Debug.Log("Jump");
             GravityPull = Vector3.zero;
 			GravityPull.y = jumpSpeed;
             is_OnGround = false;
-			GetComponent<Animator> ().SetBool ("Jump", true);
+			//GetComponent<Animator> ().SetBool ("Jump", true);
         }
         
 		if (!is_OnGround) {
@@ -138,7 +132,7 @@ public class PlayerController : MonoBehaviour {
 				GravityPull.y -= gravity * Time.deltaTime * 0.8f;
 			else
 				GravityPull.y -= gravity * Time.deltaTime;
-		} else {
+		} /*else {
 			GetComponent<Animator> ().SetBool ("Jump", false);
 		}
         
@@ -154,7 +148,7 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<Animator> ().SetBool ("Run", true);
 		} else {
 			GetComponent<Animator> ().SetBool ("Run", false);
-		}
+		}*/
 
         rb.velocity = currentMovement + GravityPull;
     }
@@ -195,8 +189,9 @@ public class PlayerController : MonoBehaviour {
 
         // 0.1f is a small offset to start the ray from inside the character
         // it is also good to note that the transform position in the sample assets is at the base of the character
-        if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, m_GroundCheckDistance))
+        if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), Vector3.down, out hitInfo, m_GroundCheckDistance))
         {
+            Debug.Log("Detects object");
 			if (hitInfo.collider.gameObject.CompareTag("Ground")) {
 				m_GroundNormal = hitInfo.normal;
 				is_OnGround = true;
