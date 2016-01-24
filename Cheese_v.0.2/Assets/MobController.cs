@@ -23,7 +23,7 @@ public class MobController : MonoBehaviour {
 	void Start () {
         this.actualState = new FollowingPathState(this);
 		this.changedState = this.actualState;
-        UnityEngine.Debug.Log("Start");
+       // UnityEngine.Debug.Log("Start");
     }
 
     public void Destroy() {
@@ -101,7 +101,7 @@ public class FollowingPathState : MobState
        
         this.mob.GetComponent<Rigidbody>().velocity = movement * mob.speed;
 
-        this.mob.transform.up = this.mob.GetComponent<Rigidbody>().velocity;
+        this.mob.transform.forward = this.mob.GetComponent<Rigidbody>().velocity;
 
         if (foundLastNode)
 			this.mob.setState (new DeadState (this.mob));
@@ -126,7 +126,7 @@ public class FollowingPathState : MobState
             bool found = false;
             while(!found) {
 				if (nextNode.linkedNodes.Length == 0) {
-					UnityEngine.Debug.Log("Found last Node.");
+					//UnityEngine.Debug.Log("Found last Node.");
 					foundLastNode = true;
 					return;
 				} else {
@@ -136,7 +136,7 @@ public class FollowingPathState : MobState
 						lastNode = nextNode;
 						nextNode = tmp;
 						found = true;
-						UnityEngine.Debug.Log("Next Node: " + nextNode.name);
+						//UnityEngine.Debug.Log("Next Node: " + nextNode.name);
                         GetRightDirection();
 					}
 
@@ -148,7 +148,7 @@ public class FollowingPathState : MobState
     }
 
     public override void OnCollisionEnter(Collision collision) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }
 
