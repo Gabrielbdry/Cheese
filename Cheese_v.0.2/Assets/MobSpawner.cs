@@ -28,7 +28,9 @@ public class MobSpawner : MonoBehaviour {
 			GameObject mob = Instantiate (_mob.transform.gameObject);
 			mob.transform.gameObject.GetComponent<MobController> ().startingNode = GameObject.Find (start).GetComponent<Node>();
 			mob.transform.gameObject.GetComponent<MobController> ().endNode = GameObject.Find ("Node (6)").GetComponent<Node> ();
-			mob.transform.position = GameObject.Find (start).transform.position + (Vector3.up * 0.5f);
+            mob.transform.gameObject.GetComponent<MobController>().speed = Random.Range(3.0f, 6.0f);
+
+            mob.transform.position = GameObject.Find (start).transform.position + (Vector3.up * 0.5f);
 			spawnClock.Reset ();
 			spawnClock.Start ();
 		}
