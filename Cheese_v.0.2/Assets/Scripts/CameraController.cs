@@ -26,8 +26,8 @@ public class CameraController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		if (Input.GetMouseButtonDown (0))
-			Debug.DrawRay (this.transform.position, this.transform.forward * 20, Color.blue, 5);
+		//if (Input.GetMouseButtonDown (0))
+			//Debug.DrawRay (this.transform.position, this.transform.forward * 20, Color.blue, 5);
 		player.UpdateDirection(transform.forward);
 		Quaternion qX = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * sensitivity, Vector3.up);
 		Quaternion qY = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * sensitivity, Vector3.Cross(new Vector3(transform.forward.x, 0.0f, transform.forward.z), Vector3.up));

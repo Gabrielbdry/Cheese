@@ -15,7 +15,7 @@ public class collider : MonoBehaviour {
 			GrabAndDrop.cheesestatus += 1;
 			if (GrabAndDrop.cheesestatus == GrabAndDrop.cheeseObj) {
 				GrabAndDrop.cheesestatus = 0;
-				//UI.money += 1000;
+				UI.money += 1000;
 				
 			}
 		}

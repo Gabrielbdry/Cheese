@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
     public float jumpSpeed = 20;
     public float gravity = 9.8f;
     public float runFactor = 1.6f;
+	public static bool weaponEquiped = false;
 
     private Rigidbody rb;
     private Vector3 moveFoward;
@@ -129,6 +130,19 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<Animator> ().SetBool ("Jump", true);
         }
         
+		if (Input.GetKeyDown (KeyCode.Tab)) {
+			if (weaponEquiped) {
+				GameObject.Find ("weapon").GetComponent<MeshRenderer> ().enabled = false;
+				GameObject.Find ("holster").GetComponent<MeshRenderer> ().enabled = true;;
+				weaponEquiped = false;
+			} else {
+
+				GameObject.Find ("weapon").GetComponent<MeshRenderer> ().enabled = true;
+				GameObject.Find ("holster").GetComponent<MeshRenderer> ().enabled = false;
+				weaponEquiped = true;
+			}
+		}
+
 		if (!is_OnGround) {
             if (GravityPull.y > 0)
 				GravityPull.y -= gravity * Time.deltaTime * 0.8f;

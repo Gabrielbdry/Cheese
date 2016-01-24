@@ -5,29 +5,28 @@ using System.Diagnostics;
 public class RayCasting : MonoBehaviour
 {
     public float range;
-    public float fireRate;
+	public float fireRate;
+	public Transform player;
     private Stopwatch watch;
-    Transform player;
-    void start()
+    void Start()
     {
         range = 1000;
-        player = Camera.main.transform;
         watch = new Stopwatch();
         watch.Start();
     }
 
-    void update()
+    void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButtonDown (0) && PlayerController.weaponEquiped);
         {
             if (watch.Elapsed.Seconds >= 1 / fireRate)
             {
                 RaycastHit hit;
-                if (Physics.Linecast(player.position, (transform.forward.normalized - player.position.normalized - transform.position.normalized).normalized * range, out hit))
+				if (Physics.Linecast(player.position, player.forward.normalized * range, out hit))
                 {
-                    if (hit.transform.tag == "Mouse")
-                    {
-                        Destroy(hit.transform.gameObject);
+                    if (hit.transform.tag == "Mob")
+                    {	
+						Destroy(hit.transform.gameObject);
                     }
 
                 }
