@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour {
     private Vector3 moveFoward;
     private Vector3 currentMovement;
     private Vector3 GravityPull;
-    private float m_GroundCheckDistance = 1.0f;
+    private float m_GroundCheckDistance = 0.5f;
     private float slope;
     private Vector3 m_GroundNormal;
 
@@ -50,7 +50,6 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        //Debug.Log(is_OnGround.ToString());
         CheckGroundStatus();
 
         bool moveFront = Input.GetKey(KeyCode.W);
@@ -65,7 +64,6 @@ public class PlayerController : MonoBehaviour {
         is_Standing = (!is_Walking && !is_Running && !is_Jumping) ? true : false;
 
         float slopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
-
         if (!moveBack && !moveFront && !moveLeft && !moveRight)
             currentMovement = Vector3.zero;
         else if (slopeAngle < 45)
@@ -118,13 +116,16 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
+        Debug.Log(is_OnGround.ToString());
         Vector3 newForward = new Vector3(currentMovement.x, 0, currentMovement.z);
         this.transform.forward = Vector3.Slerp(this.transform.forward, newForward, Time.deltaTime * 20);
 
         if (is_Jumping)
         {
             GravityPull = Vector3.zero;
+            GravityPull.x = currentMovement.x;
 			GravityPull.y = jumpSpeed;
+            GravityPull.z = currentMovement.z;
             is_OnGround = false;
             is_Jumping = false;
 			GetComponent<Animator> ().SetBool ("Jump", true);
@@ -164,11 +165,17 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<Animator> ().SetBool ("Run", false);
 		}
 
-        rb.velocity = currentMovement + GravityPull;
+        if (is_OnGround)
+            rb.velocity = currentMovement;
+        else
+        {
+            Vector3 f = new Vector3(currentMovement.x, GravityPull.y, currentMovement.z);
+            rb.velocity = f;
+        }
     }
 
     
-    void OnCollisionEnter(Collision other)
+    /*void OnCollisionEnter(Collision other)
     {
         if (other.collider.gameObject.CompareTag("Ground"))
         {
@@ -195,19 +202,19 @@ public class PlayerController : MonoBehaviour {
             is_OnGround = false;
         }
     }
-    
+    */
 
     void CheckGroundStatus()
     {
         RaycastHit hitInfo;
-
-        // 0.1f is a small offset to start the ray from inside the character
-        // it is also good to note that the transform position in the sample assets is at the base of the character
+        
         if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), Vector3.down, out hitInfo, m_GroundCheckDistance))
         {
 			if (hitInfo.collider.gameObject.CompareTag("Ground")) {
 				m_GroundNormal = hitInfo.normal;
+                is_Jumping = false;
 				is_OnGround = true;
+                GravityPull.y = 0;
 			}
         }
         else
