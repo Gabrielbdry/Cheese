@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
     public float speed;
     public float jumpSpeed = 20;
     public float gravity = 9.8f;
+    public float runFactor = 1.6f;
 
     private Rigidbody rb;
     private Vector3 moveFoward;
@@ -48,85 +49,88 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        //Debug.Log(is_OnGround.ToString());
         CheckGroundStatus();
 
         bool moveFront = Input.GetKey(KeyCode.W);
         bool moveLeft = Input.GetKey(KeyCode.A);
         bool moveRight = Input.GetKey(KeyCode.D);
         bool moveBack = Input.GetKey(KeyCode.S);
-        
-        is_Walking = !Input.GetKey(KeyCode.LeftShift);
-        is_Running = (!is_Jumping && !is_Holding) ? Input.GetKey(KeyCode.LeftShift) : false;
+
+        is_Walking = ((moveRight || moveLeft || moveFront || moveBack) && !is_Jumping && is_OnGround && !Input.GetKey(KeyCode.LeftShift)) ? true : false;
+        is_Running = ((moveRight || moveLeft || moveFront || moveBack) && is_OnGround && !is_Jumping && !is_Holding && Input.GetKey(KeyCode.LeftShift)) ? true : false;
         is_Jumping = (is_OnGround) ? Input.GetKey(KeyCode.Space) : false;
         is_Reloading = (!is_Holding) ? Input.GetKey(KeyCode.R) : false;
         is_Standing = (!is_Walking && !is_Running && !is_Jumping) ? true : false;
 
-        currentMovement.x = 0;
-        currentMovement.y = 0;
-        currentMovement.z = 0;
-
         float slopeAngle = Vector3.Angle(m_GroundNormal, Vector3.up);
 
-        if (slopeAngle < 45)
+        if (!moveBack && !moveFront && !moveLeft && !moveRight)
+            currentMovement = Vector3.zero;
+        else if (slopeAngle < 45)
         {
             if (moveFront && !moveBack)
             {
                 if (!moveLeft && !moveRight)
                 {
-                    currentMovement += Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement = Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? runFactor : 1);
                 }
                 else if (moveLeft && !moveRight)
                 {
                     Vector3 left = Vector3.Cross(m_GroundNormal, moveFoward);
                     Vector3 front = Vector3.Cross(left, m_GroundNormal);
-                    currentMovement += (front - left).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement = (front - left).normalized * speed * ((is_Running) ? runFactor : 1);
                 }
                 else if (moveRight && !moveLeft)
                 {
                     Vector3 right = Vector3.Cross(moveFoward, m_GroundNormal);
                     Vector3 front = Vector3.Cross(m_GroundNormal, right);
-                    currentMovement += (front - right).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement = (front - right).normalized * speed * ((is_Running) ? runFactor : 1);
                 }
             }
             else if (moveBack && !moveFront)
             {
                 if (!moveLeft && !moveRight)
                 {
-                    currentMovement -= Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement = -Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? runFactor : 1);
                 }
                 else if (moveLeft && !moveRight)
                 {
                     Vector3 left = Vector3.Cross(m_GroundNormal, moveFoward);
                     Vector3 back = -Vector3.Cross(left, m_GroundNormal);
-                    currentMovement += (-left + back).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement = (-left + back).normalized * speed * ((is_Running) ? runFactor : 1);
                 }
                 else if (moveRight && !moveLeft)
                 {
                     Vector3 right = Vector3.Cross(moveFoward, m_GroundNormal);
                     Vector3 back = -Vector3.Cross(m_GroundNormal, right);
-                    currentMovement += (-right + back).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement = (-right + back).normalized * speed * ((is_Running) ? runFactor : 1);
                 }
             }
             else if (moveLeft && !moveRight)
             {
-                currentMovement += Vector3.Cross(moveFoward, m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                currentMovement = Vector3.Cross(moveFoward, m_GroundNormal).normalized * speed * ((is_Running) ? runFactor : 1);
             }
             else if (moveRight && !moveLeft)
             {
-                currentMovement += Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? 2 : 1);
+                currentMovement = Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? runFactor : 1);
             }
         }
-        
+
+        Vector3 newForward = new Vector3(currentMovement.x, 0, currentMovement.z);
+        this.transform.forward = Vector3.Slerp(this.transform.forward, newForward, Time.deltaTime * 20);
+
         if (is_Jumping)
         {
             GravityPull = Vector3.zero;
 			GravityPull.y = jumpSpeed;
             is_OnGround = false;
+            is_Jumping = false;
 			GetComponent<Animator> ().SetBool ("Jump", true);
         }
         
 		if (!is_OnGround) {
-			if (GravityPull.y > 0)
+            if (GravityPull.y > 0)
 				GravityPull.y -= gravity * Time.deltaTime * 0.8f;
 			else
 				GravityPull.y -= gravity * Time.deltaTime;
@@ -134,16 +138,14 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<Animator> ().SetBool ("Jump", false);
 		}
         
-		if (moveLeft || moveRight || moveFront || moveBack) {
-			Vector3 newForward = new Vector3 (currentMovement.x, 0, currentMovement.z);
-			this.transform.forward = Vector3.Slerp (this.transform.forward, newForward, Time.deltaTime * 20);
+		if (is_Walking) {
 			GetComponent<Animator> ().SetBool ("Walk", true);
 		} else {
 			GetComponent<Animator> ().SetBool ("Walk", false);
 		}
-
+        
 		if (is_Running) {
-			GetComponent<Animator> ().SetBool ("Run", true);
+            GetComponent<Animator> ().SetBool ("Run", true);
 		} else {
 			GetComponent<Animator> ().SetBool ("Run", false);
 		}
