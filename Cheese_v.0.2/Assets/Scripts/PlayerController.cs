@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour {
         is_Jumping = false;
         is_Reloading = false;
         rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+		rb.constraints = RigidbodyConstraints.FreezeRotationX  | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         currentMovement = Vector3.zero;
         GravityPull = Vector3.zero;
 	}
@@ -130,16 +130,31 @@ public class PlayerController : MonoBehaviour {
             GravityPull = Vector3.zero;
 			GravityPull.y = jumpSpeed;
             is_OnGround = false;
+			GetComponent<Animator> ().SetBool ("Jump", true);
         }
         
-        if (!is_OnGround)
-        {
-            if (GravityPull.y > 0)
-                GravityPull.y -= gravity * Time.deltaTime * 0.8f;
-            else
-                GravityPull.y -= gravity * Time.deltaTime;
-        }
+		if (!is_OnGround) {
+			if (GravityPull.y > 0)
+				GravityPull.y -= gravity * Time.deltaTime * 0.8f;
+			else
+				GravityPull.y -= gravity * Time.deltaTime;
+		} else {
+			GetComponent<Animator> ().SetBool ("Jump", false);
+		}
         
+		if (moveLeft || moveRight || moveFront || moveBack) {
+			Vector3 newForward = new Vector3 (currentMovement.x, 0, currentMovement.z);
+			this.transform.forward = Vector3.Slerp (this.transform.forward, newForward, Time.deltaTime * 10);
+			GetComponent<Animator> ().SetBool ("Walk", true);
+		} else {
+			GetComponent<Animator> ().SetBool ("Walk", false);
+		}
+
+		if (is_Running) {
+			GetComponent<Animator> ().SetBool ("Run", true);
+		} else {
+			GetComponent<Animator> ().SetBool ("Run", false);
+		}
 
         rb.velocity = currentMovement + GravityPull;
     }

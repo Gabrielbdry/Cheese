@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\ClipThroughPlayer.cs" />
+     <Compile Include="Assets\IKControl.cs" />
      <Compile Include="Assets\MobCollisionManager.cs" />
      <Compile Include="Assets\MobController.cs" />
      <Compile Include="Assets\MobSpawner.cs" />
@@ -63,6 +64,7 @@
      <Compile Include="Assets\Scripts\RayCasting.cs" />
      <Compile Include="Assets\Scripts\Trap.cs" />
      <Compile Include="Assets\Scripts\UI.cs" />
+     <Compile Include="Assets\Scripts\collider.cs" />
      <Compile Include="Assets\Scripts\swtch.cs" />
      <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
      <None Include="Assets\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />

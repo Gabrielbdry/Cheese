@@ -13,14 +13,14 @@ public class UI : MonoBehaviour {
 	public Texture texturemachine;
 	// Use this for initialization
 	void Start () {
-        money = 0;
+        //money = 0;
 		min = 2;
 		seconds = 0;
 		timetext.transform.position.Set (32, 133, 0);
 		timetext.text = "Next Truck :" + min.ToString () + ":" + seconds.ToString ();
 		objectivetruck.text = cheesestatus.ToString () + "/10";
         objectivetruck.text = GrabAndDrop.cheesestatus.ToString() + "/" + GrabAndDrop.cheeseObj.ToString();
-        moneyText.text = money.ToString();
+        //moneyText.text = money.ToString();
 
 
 		
@@ -51,7 +51,7 @@ public class UI : MonoBehaviour {
         timetext.text = string.Format("{0:00}:{1:00}", min, seconds); 
 		//timetext.text = "Next Truck :" + min.ToString () + ":" + seconds.ToString ();
         objectivetruck.text = GrabAndDrop.cheesestatus.ToString() + "/" + GrabAndDrop.cheeseObj.ToString();
-        moneyText.text = money.ToString();
+        //moneyText.text = money.ToString();
 		
 	}
 }

@@ -15,11 +15,12 @@ public class GrabAndDrop : MonoBehaviour {
 
     GameObject getMouseHoverObject(float range)
     {
-        Vector3 position = gameObject.transform.position;
+        Vector3 position = transform.position;
         RaycastHit hit;
-        Vector3 target = position + Camera.main.transform.forward * range;
+        Vector3 target = position + transform.forward * range;
 
-        if (Physics.Linecast(position, target, out hit))
+		Debug.DrawRay (position, target);
+		if (Physics.Raycast(position, target, out hit))
         {
             return hit.collider.gameObject;
         }
@@ -34,8 +35,10 @@ public class GrabAndDrop : MonoBehaviour {
 			return;
 		}
 
-        if (grabObject == null || !CanGrab(grabObject))
-            return;
+		if (grabObject == null || !CanGrab (grabObject))
+			return;
+			
+		GetComponent<Animator> ().SetBool ("Carry", true);
         
         grabbedObject = grabObject;
     }
@@ -49,9 +52,10 @@ public class GrabAndDrop : MonoBehaviour {
     {
         if (grabbedObject == null)
             return;
-
-        if (grabbedObject.GetComponent<Rigidbody>() != null)
-            grabbedObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+		if (grabbedObject.GetComponent<Rigidbody> () != null) {
+			grabbedObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
+			GetComponent<Animator> ().SetBool ("Carry", false);
+		}
 
         grabbedObject = null;
     }
@@ -76,8 +80,10 @@ public class GrabAndDrop : MonoBehaviour {
         }
         else if (grabbedObject != null)
         {
-            Vector3 newPosition = gameObject.GetComponent<CameraController>().player.transform.position + Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up).normalized * 1.5f;
-            grabbedObject.transform.position = new Vector3(newPosition.x, newPosition.y, newPosition.z);
+			Physics.IgnoreCollision (grabbedObject.GetComponent<Collider>(), this.GetComponent<Collider>());
+			grabbedObject.transform.forward = this.transform.forward;
+            Vector3 newPosition = transform.position + transform.forward.normalized * 0.6f;
+            grabbedObject.transform.position = new Vector3(newPosition.x, newPosition.y + 0.95f, newPosition.z);
         }
     }
 }
