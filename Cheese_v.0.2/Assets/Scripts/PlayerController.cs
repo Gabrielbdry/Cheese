@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour {
     public float speed;
     public float jumpSpeed = 20;
     public float gravity = 9.8f;
+	public Mesh[] weapons;
+	public static uint currWeapon = 0;
 
     private Rigidbody rb;
     private Vector3 moveFoward;
@@ -81,47 +83,47 @@ public class PlayerController : MonoBehaviour {
             {
                 if (!moveLeft && !moveRight)
                 {
-                    currentMovement += Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement += Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 1.4f : 1);
                 }
                 else if (moveLeft && !moveRight)
                 {
                     Vector3 left = Vector3.Cross(m_GroundNormal, moveFoward);
                     Vector3 front = Vector3.Cross(left, m_GroundNormal);
-                    currentMovement += (front - left).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement += (front - left).normalized * speed * ((is_Running) ? 1.4f : 1);
                 }
                 else if (moveRight && !moveLeft)
                 {
                     Vector3 right = Vector3.Cross(moveFoward, m_GroundNormal);
                     Vector3 front = Vector3.Cross(m_GroundNormal, right);
-                    currentMovement += (front - right).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement += (front - right).normalized * speed * ((is_Running) ? 1.4f : 1);
                 }
             }
             else if (moveBack && !moveFront)
             {
                 if (!moveLeft && !moveRight)
                 {
-                    currentMovement -= Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement -= Vector3.Cross(Vector3.Cross(m_GroundNormal, moveFoward), m_GroundNormal).normalized * speed * ((is_Running) ? 1.4f : 1);
                 }
                 else if (moveLeft && !moveRight)
                 {
                     Vector3 left = Vector3.Cross(m_GroundNormal, moveFoward);
                     Vector3 back = -Vector3.Cross(left, m_GroundNormal);
-                    currentMovement += (-left + back).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement += (-left + back).normalized * speed * ((is_Running) ? 1.4f : 1);
                 }
                 else if (moveRight && !moveLeft)
                 {
                     Vector3 right = Vector3.Cross(moveFoward, m_GroundNormal);
                     Vector3 back = -Vector3.Cross(m_GroundNormal, right);
-                    currentMovement += (-right + back).normalized * speed * ((is_Running) ? 2 : 1);
+                    currentMovement += (-right + back).normalized * speed * ((is_Running) ? 1.4f : 1);
                 }
             }
             else if (moveLeft && !moveRight)
             {
-                currentMovement += Vector3.Cross(moveFoward, m_GroundNormal).normalized * speed * ((is_Running) ? 2 : 1);
+                currentMovement += Vector3.Cross(moveFoward, m_GroundNormal).normalized * speed * ((is_Running) ? 1.4f : 1);
             }
             else if (moveRight && !moveLeft)
             {
-                currentMovement += Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? 2 : 1);
+                currentMovement += Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? 1.4f : 1);
             }
         }
 
@@ -133,6 +135,10 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<Animator> ().SetBool ("Jump", true);
         }
         
+		if (Input.GetKeyDown (KeyCode.Tab)) {
+			this.GetComponentsInChildren<MeshFilter>()[2].mesh = weapons[++currWeapon % weapons.Length];
+		}
+
 		if (!is_OnGround) {
 			if (GravityPull.y > 0)
 				GravityPull.y -= gravity * Time.deltaTime * 0.8f;

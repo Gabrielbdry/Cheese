@@ -13,7 +13,7 @@ public class Creator : MonoBehaviour {
 	}
 
 	void Update () {
-		if (!broken && Time.time - lastTime >= frequency) {
+		if (!broken && Time.time - lastTime >= 1 / frequency) {
 			Instantiate (cheese);
 			lastTime = Time.time;
 		}
