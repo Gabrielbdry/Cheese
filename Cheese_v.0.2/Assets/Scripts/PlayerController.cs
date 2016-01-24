@@ -116,8 +116,7 @@ public class PlayerController : MonoBehaviour {
                 currentMovement += Vector3.Cross(m_GroundNormal, moveFoward).normalized * speed * ((is_Running) ? 2 : 1);
             }
         }
-
-        Debug.Log(is_OnGround.ToString());
+        
         if (is_Jumping)
         {
             GravityPull = Vector3.zero;

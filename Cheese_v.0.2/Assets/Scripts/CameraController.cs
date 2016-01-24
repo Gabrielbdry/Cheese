@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour {
 		if (Input.GetMouseButtonDown (0))
 			Debug.DrawRay (this.transform.position, this.transform.forward * 20, Color.blue, 5);
 		player.UpdateDirection(transform.forward);
-		Quaternion qX = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * sensitivity, new Vector3(0, 0.9f, 0));
+		Quaternion qX = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * sensitivity, Vector3.up);
 		Quaternion qY = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * sensitivity, Vector3.Cross(new Vector3(transform.forward.x, 0.0f, transform.forward.z), Vector3.up));
 		offset = qX * qY * offset;
 		offset.Normalize();
@@ -42,18 +42,21 @@ public class CameraController : MonoBehaviour {
 		Vector3 expectedCamPos = player.transform.position + offset * maxDistance;
 
 		RaycastHit hit = new RaycastHit();
-		if (Physics.Linecast(player.transform.position, expectedCamPos, out hit)) {
-			if (!hit.collider.gameObject.CompareTag("MainCamera") && !hit.collider.gameObject.CompareTag("Player")) {
+		if (Physics.Linecast(player.transform.position + new Vector3(0, 1.0f, 0), expectedCamPos, out hit)) {
+			if (!hit.collider.gameObject.CompareTag("MainCamera") && !hit.collider.gameObject.CompareTag("Player") && !hit.collider.gameObject.CompareTag("Node") && !hit.collider.gameObject.CompareTag("Mob")) {
 				expectedCamPos = hit.point;
 				if (collided) {
 					expectedCamPos.y = transform.position.y;
 				}
 				collided = true;
 			}
+            else {
+                collided = false;
+            }
 		} 
 		else
 			collided = false;
-
+        
 		transform.position = expectedCamPos;
 	}
 }
